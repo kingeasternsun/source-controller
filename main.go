@@ -17,6 +17,7 @@ limitations under the License.
 package main
 
 import (
+	stdflag "flag"
 	"fmt"
 	"os"
 	"time"
@@ -64,6 +65,8 @@ import (
 	"github.com/fluxcd/source-controller/internal/features"
 	"github.com/fluxcd/source-controller/internal/helm"
 	"github.com/fluxcd/source-controller/internal/helm/registry"
+
+	crconfig "sigs.k8s.io/controller-runtime/pkg/client/config"
 )
 
 const controllerName = "source-controller"
@@ -145,6 +148,10 @@ func main() {
 		"The list of hostkey algorithms to use for ssh connections, arranged from most preferred to the least.")
 	flag.StringVar(&defaultServiceAccount, auth.ControllerFlagDefaultServiceAccount,
 		"", "Default service account to use for workload identity when not specified in resources.")
+	// 1️⃣ 注册 controller-runtime 的 kubeconfig flags
+	crconfig.RegisterFlags(stdflag.CommandLine)
+	// 2️⃣ 将 stdlib flag 合并到 pflag
+	flag.CommandLine.AddGoFlagSet(stdflag.CommandLine)
 
 	artifactOptions.BindFlags(flag.CommandLine)
 	clientOptions.BindFlags(flag.CommandLine)
