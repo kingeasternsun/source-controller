@@ -22,7 +22,7 @@ COPY go.mod go.mod
 COPY go.sum go.sum
 
 # Cache modules
-RUN go mod download
+RUN go env -w GOPROXY=https://goproxy.cn,direct && go mod download
 
 # Copy source code
 COPY main.go main.go
